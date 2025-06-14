@@ -1,16 +1,25 @@
-# import the flask packageAdd commentMore actions
+# import the flask package
 from flask import Flask
-# from flask_restful import Resource, Api
 from flask_restful import Api
+from flask_migrate import Migrate
 
+from models import db
 from resources.entry import EntryResource
 
 # initialize our app
 app = Flask(__name__)
 
-# api = Api(app)
+# configuring our flask app through the config object
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///notebook.db"
+
 # link flask-restful with flask
 api = Api(app)
+
+# create a migrate object to manage migrations
+migrate = Migrate(app, db)
+
+# link our db to the flask app
+db.init_app(app)
 
 
 # GET "/"
@@ -55,5 +64,26 @@ def update_category(id):
 def delete_category(id):
     return {"message": "Category deleted"}
 
+
+# Create/Identify resources
+
+
+# flask-restful -> OOP
+# class Index(Resource):
+
+#     def get():
+#         return {"message": "Welcome to my first flask app"}
+
+#     def post():
+#         pass
+
+#     def patch():
+#         pass
+
+#     def delete():
+#         pass
+
+
 # app.add_resource("/", Index)
+
 api.add_resource(EntryResource, "/entries", "/entries/<entry_id>")
